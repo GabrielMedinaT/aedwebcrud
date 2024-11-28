@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
+    <!-- Configuración de tiempo de sesión -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- Definición del servlet Index -->
+    <servlet>
+        <servlet-name>Index</servlet-name>
+        <servlet-class>com.mycompany.web2.Index</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Index</servlet-name>
+        <url-pattern>/index</url-pattern>
+    </servlet-mapping>
+
+    <!-- Definición del servlet MiServlet -->
+    <servlet>
+        <servlet-name>MiServlet</servlet-name>
+        <servlet-class>com.mycompany.web2.Servlets.MiServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MiServlet</servlet-name>
+        <url-pattern>/miservlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Definición del servlet InformacionCliente -->
+    <servlet>
+        <servlet-name>InformacionCliente</servlet-name>
+        <servlet-class>com.mycompany.web2.InformacionCliente</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InformacionCliente</servlet-name>
+        <url-pattern>/info</url-pattern>
+    </servlet-mapping>
+
+    <!-- Definición del servlet Web -->
+    <servlet>
+        <servlet-name>Web</servlet-name>
+        <servlet-class>com.mycompany.web2.web</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Web</servlet-name>
+        <url-pattern>/web</url-pattern>
+    </servlet-mapping>
+
+</web-app>
