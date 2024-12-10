@@ -19,7 +19,7 @@ public class Student {
     private String familyData;
    
 
-    public Student(int id, String name, String surnames, int age, String address, int year, String familyDates) {
+    public Student(int id, String name, String surnames, int age, String address, int year, String familyData) {
         this.id = id;
         this.name = name;
         this.surnames = surnames;

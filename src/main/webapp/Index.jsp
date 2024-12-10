@@ -1,72 +1,45 @@
-<%@ page import="Data.StudentManagement" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
-<%
- 
-    StudentManagement manager = new StudentManagement();
-    List<Map<String, Object>> students = manager.readStudents();
-%>
-
+<%-- 
+    Document   : index.jsp
+    Created on : 10 dic 2024, 9:03:13
+    Author     : Gabriel
+--%>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Gestión de Alumnos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="text-center">Gestión de Alumnos - IES El Rincón</h1>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+    <div class="card shadow-sm" style="width: 400px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h4>Login de Administrador</h4>
+        </div>
+        <div class="card-body">
+            <form action="LoginServlet" method="POST">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Usuario:</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Ingresa tu usuario" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña:</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <% 
+                String errorMessage = (String) request.getAttribute("errorMessage");
+                if (errorMessage != null) { 
+            %>
+            <div class="alert alert-danger mt-3" role="alert">
+                <%= errorMessage %>
+            </div>
+            <% } %>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>NOMBRE</th>
-                        <th>APELLIDOS</th>
-                        <th>EDAD</th>
-                        <th>DIRECCIÓN</th>
-                        <th>CURSO</th>
-                        <th>DATOS DE LA FAMILIA</th>
-                        <th>Actualizar</th>
-                        <th>Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for (Map<String, Object> student : students) { %>
-                        <tr>
-                            <td><%= student.get("id") %></td>
-                            <td><%= student.get("name") %></td>
-                            <td><%= student.get("surname") %></td>
-                            <td><%= student.get("age") %></td>
-                            <td><%= student.get("address") %></td>
-                            <td><%= student.get("year") %></td>
-                            <td><%= student.get("familyData") %></td>
-                            <td>
-                                <form action="update.jsp" method="get">
-                                    <input type="hidden" name="id" value="<%= student.get("id") %>">
-                                    <button type="submit" class="btn btn-warning">Actualizar</button>
-                                </form>
-                            </td>
-                            <td>
-                                <form action="Index.jsp" method="GET">
-                                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                                    <input type="hidden" name="id" value="<%= student.get("id") %>">      
-                                </form>
-                            </td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
-                <button class="btn btn-primary btn-lg btn-block">Añadir</button>
-        </div>
-    </div>
-</div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
