@@ -11,11 +11,13 @@ package Data;
 public class Admin {
     private int id;
     private String name;
+    private String password;
     private String role;
 
-    public Admin(int id, String name, String role) {
+    public Admin(int id, String name, String password, String role) {
         this.id = id;
         this.name = name;
+        this.password = password;
         this.role = role;
     }
 
@@ -28,6 +30,10 @@ public class Admin {
         return name;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public String getRole() {
         return role;
     }
@@ -37,4 +43,3 @@ public class Admin {
         return "Admin{id=" + id + ", name='" + name + "', role='" + role + "'}";
     }
 }
-

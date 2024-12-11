@@ -96,6 +96,27 @@ public class StudentManagement {
         }
     }
     
+    public void updateStudentPartial(int id, int age, String address, int year, String familyData) throws SQLException {
+    if (con == null) {
+        throw new SQLException("La conexión a la base de datos es nula.");
+    }
+
+    String query = "UPDATE students SET age = ?, address = ?, year = ?, familydata = ? WHERE id = ?";
+    try (PreparedStatement ps = con.prepareStatement(query)) {
+        ps.setInt(1, age);
+        ps.setString(2, address);
+        ps.setInt(3, year);
+        ps.setString(4, familyData);
+        ps.setInt(5, id);
+
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected == 0) {
+            throw new SQLException("No se encontró el estudiante con ID " + id);
+        }
+    }
+}
+
+    
 
     /*
 public ArrayList<Student> getStudents() {

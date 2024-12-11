@@ -1,10 +1,12 @@
 package Data;
 
+import Connections.MyConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import Connections.MyConnection;
 
 public class AdminManagement {
 
@@ -12,70 +14,77 @@ public class AdminManagement {
     private final String TABLE = "admin"; // Tabla en la base de datos
 
     public AdminManagement() {
-        var myCon = new MyConnection();
-        con = myCon.getConnection();
+        // Inicializar la conexión
+        MyConnection myCon = new MyConnection();
+        this.con = myCon.getConnection();
+
+        if (this.con == null) {
+            System.err.println("Error: No se pudo establecer la conexión con la base de datos.");
+        }
     }
 
-    // Verificar credenciales de administrador
-public boolean validateAdmin(String username, String password) {
+    public boolean validateAdmin(String username, String password) {
+        if (con == null) {
+            System.err.println("Error: La conexión a la base de datos es nula.");
+            return false;
+        }
+
         try {
-            var ps = con.prepareStatement(
-                "SELECT * FROM " + TABLE + " WHERE name = ? AND password = ?"
-            );
-            ps.setString(1, username); // Mapeo con el campo 'name' de la tabla
-            ps.setString(2, password); // Mapeo con el campo 'password' de la tabla
+            String hashedPassword = hashPassword(password);
+            System.out.println("Usuario ingresado: " + username);
+            System.out.println("Contraseña hasheada: " + hashedPassword);
+
+            String query = "SELECT * FROM admin WHERE name = ? AND password = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, hashedPassword);
             ResultSet rs = ps.executeQuery();
-            return rs.next(); // Si encuentra un resultado, las credenciales son válidas
+
+            boolean isValid = rs.next();
+            System.out.println("Usuario válido: " + isValid);
+            return isValid;
         } catch (SQLException e) {
-            System.out.println("Error al validar administrador: " + e.getMessage());
+            System.err.println("Error al validar administrador: " + e.getMessage());
         }
+
         return false;
     }
 
-
-
-
-    // Crear nuevo administrador
-    public boolean createAdmin(String username, String password) {
+// Método para hashear contraseñas
+    private String hashPassword(String password) {
         try {
-            var ps = con.prepareStatement(
-                "INSERT INTO " + TABLE + " (name, password) VALUES (?, ?)"
-            );
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error al hashear la contraseña", e);
+        }
+    }
+
+    public String getRole(String username) {
+        if (con == null) {
+            System.err.println("Error: La conexión a la base de datos es nula.");
+            return null;
+        }
+
+        try {
+            String query = "SELECT role FROM admin WHERE name = ?";
+            PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, username);
-            ps.setString(2, password); // Considera usar un hash para mayor seguridad
-            return ps.executeUpdate() > 0;
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("role");
+            }
         } catch (SQLException e) {
-            System.out.println("Error al crear administrador: " + e.getMessage());
+            System.err.println("Error al obtener el rol: " + e.getMessage());
         }
-        return false;
+
+        return null; // Si no se encuentra el usuario o ocurre un error
     }
 
-    // Actualizar contraseña
-    public boolean updatePassword(String username, String newPassword) {
-        try {
-            var ps = con.prepareStatement(
-                "UPDATE " + TABLE + " SET password = ? WHERE name = ?"
-            );
-            ps.setString(1, newPassword);
-            ps.setString(2, username);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println("Error al actualizar contraseña: " + e.getMessage());
-        }
-        return false;
-    }
-
-    // Eliminar administrador
-    public boolean deleteAdmin(String username) {
-        try {
-            var ps = con.prepareStatement(
-                "DELETE FROM " + TABLE + " WHERE name = ?"
-            );
-            ps.setString(1, username);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println("Error al eliminar administrador: " + e.getMessage());
-        }
-        return false;
-    }
 }

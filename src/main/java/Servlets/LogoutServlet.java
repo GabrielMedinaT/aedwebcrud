@@ -12,15 +12,15 @@ import java.io.IOException;
 public class LogoutServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Invalidar la sesión actual
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false); // Obtener la sesión si existe
         if (session != null) {
-            session.invalidate();
+            session.invalidate(); // Invalidar la sesión
         }
 
-        // Redirigir al formulario de login
-        response.sendRedirect("index.jsp");
+        // Redirigir al login
+        response.sendRedirect("Index.jsp");
     }
 }

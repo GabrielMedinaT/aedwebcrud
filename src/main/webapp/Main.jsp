@@ -1,12 +1,12 @@
 <%@ page import="Data.Student" %>
 <%@ page import="Data.StudentManagement" %>
 <%@ page import="java.util.List" %>
-
 <%@ page import="java.util.Objects" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     // Verificar si el usuario está logueado
     Object loggedIn = session.getAttribute("loggedInUser");
+    String role = (String) session.getAttribute("userRole");
     if (Objects.isNull(loggedIn)) {
         // Redirigir al login si no está logueado
         response.sendRedirect("Index.jsp");
@@ -25,7 +25,10 @@
 
     if (action != null) {
         try {
-            if (action.equals("delete")) {
+            if (role.equals("teacher") && action.equals("delete")) {
+                message = "No tienes permisos para eliminar estudiantes.";
+                status = "error";
+            } else if (action.equals("delete")) {
                 // Eliminar estudiante
                 int id = Integer.parseInt(request.getParameter("id"));
                 sm.deleteStudent(id);
@@ -46,8 +49,14 @@
                     status = "success";
                 } else if (action.equals("edit")) {
                     int id = Integer.parseInt(request.getParameter("id"));
-                    sm.updateStudent(id, name, surname, age, address, year, familyData);
-                    message = "El estudiante se ha actualizado correctamente.";
+                    if (role.equals("teacher")) {
+                        // Teacher no puede actualizar nombre ni apellidos
+                        sm.updateStudentPartial(id, age, address, year, familyData);
+                        message = "Los datos del estudiante se han actualizado correctamente (excepto nombre y apellidos).";
+                    } else {
+                        sm.updateStudent(id, name, surname, age, address, year, familyData);
+                        message = "El estudiante se ha actualizado correctamente.";
+                    }
                     status = "success";
                 }
             }
@@ -87,19 +96,29 @@
 </script>
 
         <% } %>
+        <%
+    // Obtener el nombre del usuario de la sesión
+    String loggedInUser = (String) session.getAttribute("loggedInUser");
+    if (loggedInUser == null) {
+        // Si no está logueado, redirigir al login
+        response.sendRedirect("Index.jsp");
+        return;
+    }
+%>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Bienvenido, <%= loggedInUser %></h2>
+    <form action="LogoutServlet" method="POST">
+        <button type="submit" class="btn btn-danger">Salir (<%= loggedInUser %>)</button>
+    </form>
+</div>
+
 
         <h1 class="text-center">Gestión de Estudiantes</h1>
-        <!-- Aquí iría el resto del contenido como la tabla o formulario -->
-    </div>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <h1 class="text-center">Gestión de Alumnos - IES El Rincón</h1>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <table class="table table-success table-striped"">
+                    <table class="table table-success table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -109,8 +128,12 @@
                                 <th>DIRECCIÓN</th>
                                 <th>CURSO</th>
                                 <th>DATOS DE LA FAMILIA</th>
-                                <th>Actualizar</th>
-                                <th>Eliminar</th>
+                                <% if (!role.equals("user")) { %>
+                                    <th>Actualizar</th>
+                                <% } %>
+                                <% if (role.equals("admin")) { %>
+                                    <th>Eliminar</th>
+                                <% } %>
                             </tr>
                         </thead>
                         <tbody>
@@ -123,6 +146,7 @@
                                 <td><%= student.getAddress() %></td>
                                 <td><%= student.getYear() %></td>
                                 <td><%= student.getFamilyData() %></td>
+                                <% if (!role.equals("user")) { %>
                                 <td>
                                     <form action="form.jsp" method="GET">
                                         <button type="submit" class="btn btn-warning">Actualizar</button>
@@ -136,6 +160,8 @@
                                         <input type="hidden" name="familyData" value="<%= student.getFamilyData() %>">
                                     </form>
                                 </td>
+                                <% } %>
+                                <% if (role.equals("admin")) { %>
                                 <td>
                                     <form action="Main.jsp" method="GET">
                                         <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -143,14 +169,17 @@
                                         <input type="hidden" name="id" value="<%= student.getId() %>">
                                     </form>
                                 </td>
+                                <% } %>
                             </tr>
                             <% } %>
                         </tbody>
                     </table>
+                    <% if (!role.equals("user")) { %>
                     <form action="form.jsp" method="GET">
                         <button class="btn btn-primary btn-lg btn-block">Añadir</button>
                         <input type="hidden" name="action" value="insert">
                     </form>
+                    <% } %>
                 </div>
             </div>
         </div>

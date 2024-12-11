@@ -18,6 +18,7 @@
             <h4>Login de Administrador</h4>
         </div>
         <div class="card-body">
+            <p class="text-center text-muted mb-4">Ingrese sus credenciales para acceder al sistema.</p>
             <form action="LoginServlet" method="POST">
                 <div class="mb-3">
                     <label for="name" class="form-label">Usuario:</label>
@@ -30,6 +31,7 @@
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
             <% 
+                // Mostrar mensaje de error si existe
                 String errorMessage = (String) request.getAttribute("errorMessage");
                 if (errorMessage != null) { 
             %>
@@ -37,6 +39,9 @@
                 <%= errorMessage %>
             </div>
             <% } %>
+        </div>
+        <div class="card-footer text-center text-muted">
+            &copy; 2024 Gabriel - Todos los derechos reservados
         </div>
     </div>
     <!-- Bootstrap JS -->

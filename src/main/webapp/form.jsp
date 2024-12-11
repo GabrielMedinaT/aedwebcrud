@@ -3,6 +3,7 @@
 <%
     // Verificar si el usuario está logueado
     Object loggedIn = session.getAttribute("loggedInUser");
+    String role = (String) session.getAttribute("userRole");
     if (Objects.isNull(loggedIn)) {
         // Redirigir al login si no está logueado
         response.sendRedirect("Index.jsp");
@@ -35,9 +36,6 @@
                     <h1 class="text-center">
                         <%= "insert".equals(request.getParameter("action")) ? "Añadir Alumno" : "Editar Alumno"%>
                     </h1>
-
-
-
                 </div>
             </div>
 
@@ -54,13 +52,21 @@
                         <div class="mb-3">
                             <label for="name" class="form-label">Nombre</label>
                             <input type="text" class="form-control" id="name" name="name" 
-                                   value="<%= request.getParameter("name") != null ? request.getParameter("name") : ""%>" required>
+                                   value="<%= request.getParameter("name") != null ? request.getParameter("name") : ""%>" 
+                                   <%= "teacher".equals(role) ? "disabled" : "" %> required>
+                            <% if ("teacher".equals(role)) { %>
+                            <small class="text-danger">Contacte con el administrador para modificar este campo.</small>
+                            <% } %>
                         </div>
 
                         <div class="mb-3">
                             <label for="surname" class="form-label">Apellidos</label>
                             <input type="text" class="form-control" id="surname" name="surname" 
-                                   value="<%= request.getParameter("surname") != null ? request.getParameter("surname") : ""%>" required>
+                                   value="<%= request.getParameter("surname") != null ? request.getParameter("surname") : ""%>" 
+                                   <%= "teacher".equals(role) ? "disabled" : "" %> required>
+                            <% if ("teacher".equals(role)) { %>
+                            <small class="text-danger">Contacte con el administrador para modificar este campo.</small>
+                            <% } %>
                         </div>
 
                         <div class="mb-3">
@@ -92,7 +98,6 @@
                                 class="<%= request.getParameter("action") != null && request.getParameter("action").equals("edit") ? "btn btn-warning" : "btn btn-primary"%>">
                                 <%= request.getParameter("action") != null && request.getParameter("action").equals("edit") ? "Actualizar" : "Insertar"%>
                             </button>
-
                         </div>
                     </form>
                 </div>
