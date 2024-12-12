@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * @author Gabriel Medina
  */
 public class MyConnection {
-    private static final String URL = "jdbc:mysql://localhost:3307/aed";
+    private static final String URL = "jdbc:mysql://localhost/aed";
     private static final String URLP = "jdbc:postgresql://localhost:5432/aed?characterEncoding=UTF-8";
     private static final String USERP = "postgres";
     private static final String USER = "root";

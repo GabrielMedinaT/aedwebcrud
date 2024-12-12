@@ -42,38 +42,46 @@ public class StudentManagement {
     }
 
     // Leer estudiantes - READ 
-    public ArrayList<Student> getStudents() {
-        ArrayList<Student> listStudents = new ArrayList<>();
-        PreparedStatement statement;
-        ResultSet resultSet;
+public ArrayList<Student> getStudents(String sortField, String order) {
+    ArrayList<Student> listStudents = new ArrayList<>();
+    PreparedStatement statement;
+    ResultSet resultSet;
 
-        try {
-            statement = con.prepareStatement("select * from students");
-            resultSet = statement.executeQuery();
-
-            // Un ResultSet mantiene un cursor que apunta a la fila actual de datos. El
-            // cursor se mueve una fila hacia abajo cada vez
-            // que se llama al método ‘next()’. Inicialmente se sitúa antes de la primera
-            // fila, por lo que hay que llamar al método
-            // ‘next()’ para situarlo en la primera fila convirtiéndola en la fila actual.
-            // Las filas de ResultSet se recuperan en
-            // secuencia desde la fila más alta a la más baja
-            while (resultSet.next())
-                listStudents.add(new Student(resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("surname"),
-                        resultSet.getInt("age"),
-                        resultSet.getString("address"),
-                        resultSet.getInt("year"),
-                        resultSet.getString("familydata")));
-
-            return listStudents;
-
-        } catch (SQLException e) {
-            System.out.println("Error when obtaining data from the database: " + e);
-            return null;
+    try {
+        // Validar los parámetros
+        if (sortField == null || sortField.isEmpty()) {
+            sortField = "id"; // Campo predeterminado
         }
+        if (order == null || (!order.equalsIgnoreCase("asc") && !order.equalsIgnoreCase("desc"))) {
+            order = "asc"; // Orden predeterminado
+        }
+
+        // Construir la consulta SQL dinámicamente
+        String query = "SELECT * FROM students ORDER BY " + sortField + " " + order;
+
+        // Preparar y ejecutar la consulta
+        statement = con.prepareStatement(query);
+        resultSet = statement.executeQuery();
+
+        // Procesar los resultados
+        while (resultSet.next()) {
+            listStudents.add(new Student(
+                    resultSet.getInt("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("surname"),
+                    resultSet.getInt("age"),
+                    resultSet.getString("address"),
+                    resultSet.getInt("year"),
+                    resultSet.getString("familydata")));
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error al obtener datos: " + e);
     }
+
+    return listStudents;
+}
+
     public Student select(int id){
         PreparedStatement ps;
         ResultSet rs;
