@@ -41,9 +41,10 @@
                 String address = request.getParameter("address");
                 int year = Integer.parseInt(request.getParameter("year"));
                 String familyData = request.getParameter("familyData");
+                boolean consentimiento = "on".equals(request.getParameter("consentimiento"));
 
                 if (action.equals("insert")) {
-                    sm.createStudent(name, surname, age, address, year, familyData);
+                    sm.createStudent(name, surname, age, address, year, familyData, consentimiento);
                     message = "El estudiante se ha añadido correctamente.";
                     status = "success";
                 } else if (action.equals("edit")) {
@@ -53,7 +54,7 @@
                         sm.updateStudentPartial(id, age, address, year, familyData);
                         message = "Los datos del estudiante se han actualizado correctamente (excepto nombre y apellidos).";
                     } else {
-                        sm.updateStudent(id, name, surname, age, address, year, familyData);
+                        sm.updateStudent(id, name, surname, age, address, year, familyData, consentimiento);
                         message = "El estudiante se ha actualizado correctamente.";
                     }
                     status = "success";
@@ -158,7 +159,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2>Bienvenido, <%= loggedIn%></h2>
                 <form action="LogoutServlet" method="POST">
-                    <button type="submit" class="btn btn-danger">Salir (<%= loggedIn%>)</button>
+                    <button type="submit" class="btn btn-success">Salir (<%= loggedIn%>)</button>
                 </form>
             </div>
 
@@ -175,13 +176,17 @@
                                     <th><a href="Main.jsp?sort=age&order=<%= ("age".equals(sortField) ? newOrder : "asc")%>">EDAD<%= "age".equals(sortField) ? ("asc".equals(order) ? " ⬆" : " ⬇") : ""%></a></th>
                                     <th><a href="Main.jsp?sort=address&order=<%= ("address".equals(sortField) ? newOrder : "asc")%>">DIRECCIÓN<%= "address".equals(sortField) ? ("asc".equals(order) ? " ⬆" : " ⬇") : ""%></a></th>
                                     <th><a href="Main.jsp?sort=year&order=<%= ("year".equals(sortField) ? newOrder : "asc")%>">CURSO<%= "year".equals(sortField) ? ("asc".equals(order) ? " ⬆" : " ⬇") : ""%></a></th>
+                                    <th><a href="Main.jsp?sort=consentimiento&order=<%= ("consentimiento".equals(sortField) ? newOrder : "asc")%>">
+                                            CONSENTIMIENTO<%= "consentimiento".equals(sortField) ? ("asc".equals(order) ? " ⬆" : " ⬇") : ""%>
+                                        </a></th>
+
                                     <th><a href="Main.jsp?sort=familydata&order=<%= ("familydata".equals(sortField) ? newOrder : "asc")%>">DATOS DE FAMILIA<%= "familydata".equals(sortField) ? ("asc".equals(order) ? " ⬆" : " ⬇") : ""%></a></th>
-                                    <% if (!role.equals("user")) { %>
+                                        <% if (!role.equals("user")) { %>
                                     <th>Actualizar</th>
-                                    <% } %>
-                                    <% if (role.equals("admin")) { %>
+                                        <% } %>
+                                        <% if (role.equals("admin")) { %>
                                     <th>Eliminar</th>
-                                    <% } %>
+                                        <% } %>
                                 </tr>
                             </thead>
                             <tbody>
@@ -193,6 +198,7 @@
                                     <td><%= student.getAge()%></td>
                                     <td><%= student.getAddress()%></td>
                                     <td><%= student.getYear()%></td>
+                                    <td><%= student.isConsentimiento() ? "Sí" : "No"%></td>
                                     <td><%= student.getFamilyData()%></td>
                                     <% if (!role.equals("user")) {%>
                                     <td>
@@ -228,7 +234,7 @@
         </div>
         <div id="loading" style="display: none;" class="hourglassBackground">
             <div class="hourglassContainer">
-                
+
             </div>
         </div>
         <script>
@@ -244,7 +250,7 @@
 
                         setTimeout(() => {
                             window.location.href = href;
-                        }, 2000);
+                        }, 500);
                     });
                 });
             });
