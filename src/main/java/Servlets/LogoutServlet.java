@@ -21,6 +21,6 @@ public class LogoutServlet extends HttpServlet {
         }
 
         // Redirigir al login
-        response.sendRedirect("Index.jsp");
+        response.sendRedirect("index.jsp");
     }
 }

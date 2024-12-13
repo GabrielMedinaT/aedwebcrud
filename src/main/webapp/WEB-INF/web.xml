@@ -8,11 +8,11 @@
 
     <!-- Definición del servlet Index -->
     <servlet>
-        <servlet-name>Index</servlet-name>
+        <servlet-name>index</servlet-name>
         <servlet-class>com.mycompany.web2.Index</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Index</servlet-name>
+        <servlet-name>index</servlet-name>
         <url-pattern>/index</url-pattern>
     </servlet-mapping>
 

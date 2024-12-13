@@ -17,9 +17,18 @@ public class Student {
     private String address;
     private int year;
     private String familyData;
+    private boolean consentimiento;
+
+    public void setConsentimiento(boolean consentimiento) {
+        this.consentimiento = consentimiento;
+    }
+
+    public boolean isConsentimiento() {
+        return consentimiento;
+    }
    
 
-    public Student(int id, String name, String surnames, int age, String address, int year, String familyData) {
+    public Student(int id, String name, String surnames, int age, String address, int year, String familyData, boolean consentimiento) {
         this.id = id;
         this.name = name;
         this.surnames = surnames;
@@ -27,15 +36,17 @@ public class Student {
         this.address = address;
         this.year = year;
         this.familyData = familyData;
+        this.consentimiento= consentimiento;
     }
 
-    public Student(String name, String surnames, int age, String address, int year, String familyData) {
+    public Student(String name, String surnames, int age, String address, int year, String familyData, boolean consentimiento) {
         this.name = name;
         this.surnames = surnames;
         this.age = age;
         this.address = address;
         this.year = year;
         this.familyData = familyData;
+        this.consentimiento= consentimiento;
     }   
  
     
@@ -108,7 +119,8 @@ public class Student {
                 + "\nAge: \t\t" + getAge()
                 + "\nAddress: \t" + getAddress()
                 + "\nYear: \t" + getYear()
-                + "\nFamilyData: \t" + getFamilyData() + "\n";
+                + "\nFamilyData: \t" + getFamilyData() + "\n"
+                + "\nConsentimiento: \t" + isConsentimiento() + "\n";
     }
 }
 

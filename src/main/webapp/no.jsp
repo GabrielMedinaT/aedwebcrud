@@ -10,8 +10,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta http-equiv="refresh" content="4;url=Index.jsp">
-        <title>Redireccionando...</title>
+        <meta http-equiv="refresh" content="4;url=index.jsp">
+        <title>NO  NO  NO </title>
         <style>
             body {
                 display: flex;
