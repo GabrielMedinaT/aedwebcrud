@@ -20,13 +20,11 @@ public class StudentManagement {
         con = myCon.getConnection();
     }
 
-    
-    
     // Crear estudiante - CREATE
-    public boolean createStudent(String name, String surname, int age, String address, int year, String familyData) {
+    public boolean createStudent(String name, String surname, int age, String address, int year, String familyData, boolean consentimiento) {
         try {
             var ps = con.prepareStatement(
-                    "INSERT INTO " + TABLE + " (name, surname, age, address, year,  familydata) VALUES (?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO students (name, surname, age, address, year, familydata, consentimiento) VALUES (?, ?, ?, ?, ?, ?, ?)"
             );
             ps.setString(1, name);
             ps.setString(2, surname);
@@ -34,97 +32,104 @@ public class StudentManagement {
             ps.setString(4, address);
             ps.setInt(5, year);
             ps.setString(6, familyData);
+            ps.setBoolean(7, consentimiento);
             return ps.executeUpdate() > 0;
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             System.out.println("Error al agregar un estudiante: " + ex.getMessage());
+            return false;
         }
-        return false;
     }
 
     // Leer estudiantes - READ 
-public ArrayList<Student> getStudents(String sortField, String order) {
-    ArrayList<Student> listStudents = new ArrayList<>();
-    PreparedStatement statement;
-    ResultSet resultSet;
+    public ArrayList<Student> getStudents(String sortField, String order) {
+        ArrayList<Student> listStudents = new ArrayList<>();
+        PreparedStatement statement;
+        ResultSet resultSet;
 
-    try {
-        // Validar los parámetros
-        if (sortField == null || sortField.isEmpty()) {
-            sortField = "id"; // Campo predeterminado
-        }
-        if (order == null || (!order.equalsIgnoreCase("asc") && !order.equalsIgnoreCase("desc"))) {
-            order = "asc"; // Orden predeterminado
-        }
-
-        // Construir la consulta SQL dinámicamente
-        String query = "SELECT * FROM students ORDER BY " + sortField + " " + order;
-
-        // Preparar y ejecutar la consulta
-        statement = con.prepareStatement(query);
-        resultSet = statement.executeQuery();
-
-        // Procesar los resultados
-        while (resultSet.next()) {
-            listStudents.add(new Student(
-                    resultSet.getInt("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("surname"),
-                    resultSet.getInt("age"),
-                    resultSet.getString("address"),
-                    resultSet.getInt("year"),
-                    resultSet.getString("familydata")));
-        }
-
-    } catch (SQLException e) {
-        System.out.println("Error al obtener datos: " + e);
-    }
-
-    return listStudents;
-}
-
-    public Student select(int id){
-        PreparedStatement ps;
-        ResultSet rs;
         try {
-            ps = con.prepareStatement("Select * from students WHERE id=?");
-            ps.setInt(1,id);
-            rs= ps.executeQuery();
-            if(rs.next()){
-                Student a=(new Student(id,rs.getString("name"),rs.getString("surname"),
-                        rs.getInt("age"),rs.getString("address"),rs.getInt("year"),
-                        rs.getString("familyData")));
-                return a;
-            }else{
-                return null;
+            // Validar los parámetros
+            if (sortField == null || sortField.isEmpty()) {
+                sortField = "id"; // Campo predeterminado
+            }
+            if (order == null || (!order.equalsIgnoreCase("asc") && !order.equalsIgnoreCase("desc"))) {
+                order = "asc"; // Orden predeterminado
+            }
+
+            // Construir la consulta SQL dinámicamente
+            String query = "SELECT * FROM students ORDER BY " + sortField + " " + order;
+
+            // Preparar y ejecutar la consulta
+            statement = con.prepareStatement(query);
+            resultSet = statement.executeQuery();
+
+            // Procesar los resultados
+            while (resultSet.next()) {
+                listStudents.add(new Student(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("surname"),
+                        resultSet.getInt("age"),
+                        resultSet.getString("address"),
+                        resultSet.getInt("year"),
+                        resultSet.getString("familydata"),
+                        resultSet.getBoolean("consentimiento")));
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener: " + e);
+            System.out.println("Error al obtener datos: " + e);
+        }
+
+        return listStudents;
+    }
+
+    public Student select(int id) {
+    PreparedStatement ps;
+    ResultSet rs;
+    try {
+        ps = con.prepareStatement("SELECT * FROM students WHERE id = ?");
+        ps.setInt(1, id);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            return new Student(
+                    id,
+                    rs.getString("name"),
+                    rs.getString("surname"),
+                    rs.getInt("age"),
+                    rs.getString("address"),
+                    rs.getInt("year"),
+                    rs.getString("familydata"),
+                    rs.getBoolean("consentimiento") 
+            );
+        } else {
             return null;
         }
-    }
-    
-    public void updateStudentPartial(int id, int age, String address, int year, String familyData) throws SQLException {
-    if (con == null) {
-        throw new SQLException("La conexión a la base de datos es nula.");
-    }
 
-    String query = "UPDATE students SET age = ?, address = ?, year = ?, familydata = ? WHERE id = ?";
-    try (PreparedStatement ps = con.prepareStatement(query)) {
-        ps.setInt(1, age);
-        ps.setString(2, address);
-        ps.setInt(3, year);
-        ps.setString(4, familyData);
-        ps.setInt(5, id);
-
-        int rowsAffected = ps.executeUpdate();
-        if (rowsAffected == 0) {
-            throw new SQLException("No se encontró el estudiante con ID " + id);
-        }
+    } catch (SQLException e) {
+        System.out.println("Error al obtener: " + e);
+        return null;
     }
 }
 
-    
+
+    public void updateStudentPartial(int id, int age, String address, int year, String familyData) throws SQLException {
+        if (con == null) {
+            throw new SQLException("La conexión a la base de datos es nula.");
+        }
+
+        String query = "UPDATE students SET age = ?, address = ?, year = ?, familydata = ? WHERE id = ?";
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, age);
+            ps.setString(2, address);
+            ps.setInt(3, year);
+            ps.setString(4, familyData);
+            ps.setInt(5, id);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("No se encontró el estudiante con ID " + id);
+            }
+        }
+    }
 
     /*
 public ArrayList<Student> getStudents() {
@@ -149,9 +154,8 @@ public ArrayList<Student> getStudents() {
 }
     
 
-*/
-
-  public boolean updateStudent(int id, String name, String surname, Integer age, String address, Integer year, String familyData) {
+     */
+ public boolean updateStudent(int id, String name, String surname, Integer age, String address, Integer year, String familyData, Boolean consentimiento) {
     try {
         StringBuilder sqlBuilder = new StringBuilder("UPDATE " + TABLE + " SET ");
         boolean hasPrevious = false;
@@ -192,8 +196,16 @@ public ArrayList<Student> getStudents() {
             if (hasPrevious) {
                 sqlBuilder.append(", ");
             }
-            sqlBuilder.append("familydata= ?"); // Ajuste aquí: comillas dobles
+            sqlBuilder.append("familydata = ?");
+            hasPrevious = true;
         }
+        if (consentimiento != null) { // No se evalúa "-" porque es boolean
+            if (hasPrevious) {
+                sqlBuilder.append(", ");
+            }
+            sqlBuilder.append("consentimiento = ?");
+        }
+
         sqlBuilder.append(" WHERE id = ?");
 
         PreparedStatement ps = con.prepareStatement(sqlBuilder.toString());
@@ -216,6 +228,9 @@ public ArrayList<Student> getStudents() {
         }
         if (familyData != null && !familyData.equals("-")) {
             ps.setString(parameterIndex++, familyData);
+        }
+        if (consentimiento != null) {
+            ps.setBoolean(parameterIndex++, consentimiento);
         }
 
         ps.setInt(parameterIndex, id);
