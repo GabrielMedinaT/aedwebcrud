@@ -204,17 +204,17 @@
             }
             #tabla {
                 box-shadow: 0 4px 8px rgba(0.2, 0.2, 0.2, 0.2);
-                height: 100vh;
+                height: 100%;
                 border-radius:  12px;
             }
-           #tabla tr {
-    cursor: pointer;
-    transition: all 0.5s;
-}
-           #tabla tr:hover {
-               transform: scale(1.01);
-               
-}
+            #tabla tr {
+                cursor: pointer;
+                transition: all 0.5s;
+            }
+            #tabla tr:hover {
+                transform: scale(1.01);
+
+            }
 
 
         </style>
@@ -253,10 +253,10 @@
             </div>
 
             <h1 class="text-center">Gestión de Estudiantes</h1>
-            <div class="container-fluid" id="tabla">
+            <div class="container-fluid" >
                 <div class="row">
                     <div class="col-12">
-                        <table class="table table-success table-striped">
+                        <table class="table table-success table-striped" id="tabla">
                             <thead>
                                 <tr>
                                     <th><a href="Main.jsp?sort=id&order=<%= ("id".equals(sortField) ? newOrder : "asc")%>">ID<%= "id".equals(sortField) ? ("asc".equals(order) ? " ⬆" : " ⬇") : ""%></a></th>
@@ -281,7 +281,16 @@
                             <tbody>
                                 <% for (Student student : students) {%>
                                 <tr>
-                                    <td><%= student.getId()%></td>
+                                    <td>
+                                        <form action="card.jsp" method="POST" style="display: inline;">
+                                            <input type="hidden" name="id" value="<%= student.getId()%>">
+                                            <button type="submit" class="btn btn-link" style="padding: 0; border: none; background: none;">
+                                                <%= student.getId()%>
+                                            </button>
+                                        </form>
+                                    </td>
+
+
                                     <td><%= student.getName()%></td>
                                     <td><%= student.getSurnames()%></td>
                                     <td><%= student.getAge()%></td>
