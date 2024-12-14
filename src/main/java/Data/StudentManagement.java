@@ -83,33 +83,32 @@ public class StudentManagement {
     }
 
     public Student select(int id) {
-    PreparedStatement ps;
-    ResultSet rs;
-    try {
-        ps = con.prepareStatement("SELECT * FROM students WHERE id = ?");
-        ps.setInt(1, id);
-        rs = ps.executeQuery();
-        if (rs.next()) {
-            return new Student(
-                    id,
-                    rs.getString("name"),
-                    rs.getString("surname"),
-                    rs.getInt("age"),
-                    rs.getString("address"),
-                    rs.getInt("year"),
-                    rs.getString("familydata"),
-                    rs.getBoolean("consentimiento") 
-            );
-        } else {
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            ps = con.prepareStatement("SELECT * FROM students WHERE id = ?");
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Student(
+                        id,
+                        rs.getString("name"),
+                        rs.getString("surname"),
+                        rs.getInt("age"),
+                        rs.getString("address"),
+                        rs.getInt("year"),
+                        rs.getString("familydata"),
+                        rs.getBoolean("consentimiento")
+                );
+            } else {
+                return null;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al obtener: " + e);
             return null;
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error al obtener: " + e);
-        return null;
     }
-}
-
 
     public void updateStudentPartial(int id, int age, String address, int year, String familyData) throws SQLException {
         if (con == null) {
@@ -155,93 +154,92 @@ public ArrayList<Student> getStudents() {
     
 
      */
- public boolean updateStudent(int id, String name, String surname, Integer age, String address, Integer year, String familyData, Boolean consentimiento) {
-    try {
-        StringBuilder sqlBuilder = new StringBuilder("UPDATE " + TABLE + " SET ");
-        boolean hasPrevious = false;
+    public boolean updateStudent(int id, String name, String surname, Integer age, String address, Integer year, String familyData, Boolean consentimiento) {
+        try {
+            StringBuilder sqlBuilder = new StringBuilder("UPDATE " + TABLE + " SET ");
+            boolean hasPrevious = false;
 
-        if (name != null && !name.equals("-")) {
-            sqlBuilder.append("name = ?");
-            hasPrevious = true;
-        }
-        if (surname != null && !surname.equals("-")) {
-            if (hasPrevious) {
-                sqlBuilder.append(", ");
+            if (name != null && !name.equals("-")) {
+                sqlBuilder.append("name = ?");
+                hasPrevious = true;
             }
-            sqlBuilder.append("surname = ?");
-            hasPrevious = true;
-        }
-        if (age != null && age != -1) {
-            if (hasPrevious) {
-                sqlBuilder.append(", ");
+            if (surname != null && !surname.equals("-")) {
+                if (hasPrevious) {
+                    sqlBuilder.append(", ");
+                }
+                sqlBuilder.append("surname = ?");
+                hasPrevious = true;
             }
-            sqlBuilder.append("age = ?");
-            hasPrevious = true;
-        }
-        if (address != null && !address.equals("-")) {
-            if (hasPrevious) {
-                sqlBuilder.append(", ");
+            if (age != null && age != -1) {
+                if (hasPrevious) {
+                    sqlBuilder.append(", ");
+                }
+                sqlBuilder.append("age = ?");
+                hasPrevious = true;
             }
-            sqlBuilder.append("address = ?");
-            hasPrevious = true;
-        }
-        if (year != null && year != -1) {
-            if (hasPrevious) {
-                sqlBuilder.append(", ");
+            if (address != null && !address.equals("-")) {
+                if (hasPrevious) {
+                    sqlBuilder.append(", ");
+                }
+                sqlBuilder.append("address = ?");
+                hasPrevious = true;
             }
-            sqlBuilder.append("year = ?");
-            hasPrevious = true;
-        }
-        if (familyData != null && !familyData.equals("-")) {
-            if (hasPrevious) {
-                sqlBuilder.append(", ");
+            if (year != null && year != -1) {
+                if (hasPrevious) {
+                    sqlBuilder.append(", ");
+                }
+                sqlBuilder.append("year = ?");
+                hasPrevious = true;
             }
-            sqlBuilder.append("familydata = ?");
-            hasPrevious = true;
-        }
-        if (consentimiento != null) { // No se evalúa "-" porque es boolean
-            if (hasPrevious) {
-                sqlBuilder.append(", ");
+            if (familyData != null && !familyData.equals("-")) {
+                if (hasPrevious) {
+                    sqlBuilder.append(", ");
+                }
+                sqlBuilder.append("familydata = ?");
+                hasPrevious = true;
             }
-            sqlBuilder.append("consentimiento = ?");
-        }
+            if (consentimiento != null) { // No se evalúa "-" porque es boolean
+                if (hasPrevious) {
+                    sqlBuilder.append(", ");
+                }
+                sqlBuilder.append("consentimiento = ?");
+            }
 
-        sqlBuilder.append(" WHERE id = ?");
+            sqlBuilder.append(" WHERE id = ?");
 
-        PreparedStatement ps = con.prepareStatement(sqlBuilder.toString());
+            PreparedStatement ps = con.prepareStatement(sqlBuilder.toString());
 
-        int parameterIndex = 1;
-        if (name != null && !name.equals("-")) {
-            ps.setString(parameterIndex++, name);
-        }
-        if (surname != null && !surname.equals("-")) {
-            ps.setString(parameterIndex++, surname);
-        }
-        if (age != null && age != -1) {
-            ps.setInt(parameterIndex++, age);
-        }
-        if (address != null && !address.equals("-")) {
-            ps.setString(parameterIndex++, address);
-        }
-        if (year != null && year != -1) {
-            ps.setInt(parameterIndex++, year);
-        }
-        if (familyData != null && !familyData.equals("-")) {
-            ps.setString(parameterIndex++, familyData);
-        }
-        if (consentimiento != null) {
-            ps.setBoolean(parameterIndex++, consentimiento);
-        }
+            int parameterIndex = 1;
+            if (name != null && !name.equals("-")) {
+                ps.setString(parameterIndex++, name);
+            }
+            if (surname != null && !surname.equals("-")) {
+                ps.setString(parameterIndex++, surname);
+            }
+            if (age != null && age != -1) {
+                ps.setInt(parameterIndex++, age);
+            }
+            if (address != null && !address.equals("-")) {
+                ps.setString(parameterIndex++, address);
+            }
+            if (year != null && year != -1) {
+                ps.setInt(parameterIndex++, year);
+            }
+            if (familyData != null && !familyData.equals("-")) {
+                ps.setString(parameterIndex++, familyData);
+            }
+            if (consentimiento != null) {
+                ps.setBoolean(parameterIndex++, consentimiento);
+            }
 
-        ps.setInt(parameterIndex, id);
+            ps.setInt(parameterIndex, id);
 
-        return ps.executeUpdate() > 0;
-    } catch (Exception ex) {
-        System.out.println("Error al actualizar el estudiante: " + ex.getMessage());
+            return ps.executeUpdate() > 0;
+        } catch (Exception ex) {
+            System.out.println("Error al actualizar el estudiante: " + ex.getMessage());
+        }
+        return false;
     }
-    return false;
-}
-
 
     // Eliminar estudiante - DELETE
     public boolean deleteStudent(int id) {
@@ -254,4 +252,76 @@ public ArrayList<Student> getStudents() {
         }
         return false;
     }
+
+    public boolean enrollStudentInCourse(int studentId, int courseId) {
+        Connection con = this.con; // Asume que la conexión ya está inicializada
+        try {
+            // Consulta las asignaturas asociadas al curso
+            String querySubjects = "SELECT subject_id FROM course_subjects WHERE course_id = ?";
+            PreparedStatement psSubjects = con.prepareStatement(querySubjects);
+            psSubjects.setInt(1, courseId);
+            ResultSet rsSubjects = psSubjects.executeQuery();
+
+            // Preparar inserción de estudiante en asignaturas
+            String insertQuery = "INSERT INTO student_subjects (student_id, subject_id) VALUES (?, ?)";
+            PreparedStatement psInsert = con.prepareStatement(insertQuery);
+
+            while (rsSubjects.next()) {
+                int subjectId = rsSubjects.getInt("subject_id");
+
+                // Verificar si ya está matriculado en esta asignatura
+                if (!isStudentEnrolledInSubject(studentId, subjectId)) {
+                    psInsert.setInt(1, studentId);
+                    psInsert.setInt(2, subjectId);
+                    psInsert.addBatch(); // Añadir a un batch para ejecución más eficiente
+                }
+            }
+
+            // Ejecutar inserciones en batch
+            psInsert.executeBatch();
+            return true;
+
+        } catch (SQLException ex) {
+            System.out.println("Error al matricular al estudiante en el curso: " + ex.getMessage());
+            return false;
+        }
+    }
+
+// Método auxiliar para verificar si un estudiante ya está matriculado en una asignatura
+    private boolean isStudentEnrolledInSubject(int studentId, int subjectId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM student_subjects WHERE student_id = ? AND subject_id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, studentId);
+        ps.setInt(2, subjectId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0; // Devuelve true si ya está matriculado
+        }
+        return false;
+    }
+    
+     public List<Course> getCoursesByStudent(int studentId) {
+        List<Course> courses = new ArrayList<>();
+        try {
+            String query = "SELECT DISTINCT c.id, c.name "
+                    + "FROM courses c "
+                    + "JOIN course_subjects cs ON c.id = cs.course_id "
+                    + "JOIN student_subjects ss ON cs.subject_id = ss.subject_id "
+                    + "WHERE ss.student_id = ?";
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, studentId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                courses.add(new Course(
+                        rs.getInt("id"),
+                        rs.getString("name")
+                ));
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error al obtener los cursos del estudiante: " + ex.getMessage());
+        }
+        return courses;
+    }
+
 }

@@ -251,6 +251,15 @@
                     </button>
                 </form>
             </div>
+            <%
+                if ("super".equals(role)) {
+            %>
+            <form action="teachers.jsp" method="get">
+                <button type="submit" class="btn btn-primary">Profesores</button>
+            </form>
+            <%
+                }
+            %>
 
             <h1 class="text-center">Gestión de Estudiantes</h1>
             <div class="container-fluid" >
@@ -273,7 +282,7 @@
                                         <% if (!role.equals("user")) { %>
                                     <th>Actualizar</th>
                                         <% } %>
-                                        <% if (role.equals("admin")) { %>
+                                        <% if (role.equals("admin") || (role.equals("super"))) { %>
                                     <th>Eliminar</th>
                                         <% } %>
                                 </tr>
@@ -300,14 +309,15 @@
                                     <td><%= student.getFamilyData()%></td>
                                     <% if (!role.equals("user")) {%>
                                     <td>
+                                        <!-- Botón para actualizar estudiante -->
                                         <form action="form.jsp" method="GET">
                                             <button type="submit" class="btn btn-warning">Actualizar</button>
                                             <input type="hidden" name="action" value="edit">
                                             <input type="hidden" name="id" value="<%= student.getId()%>">
-                                        </form>
-                                    </td>
-                                    <% } %>
-                                    <% if (role.equals("admin")) {%>
+                                            <input type="hidden" name="source" value="Main.jsp"> <!-- Parámetro source -->
+                                        </form>                                    </td>
+                                        <% } %>
+                                        <% if (role.equals("admin") || role.equals("super")) {%>
                                     <td>
                                         <form action="Main.jsp" method="GET">
                                             <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -321,9 +331,11 @@
                             </tbody>
                         </table>
                         <% if (!role.equals("user")) { %>
+                        <!-- Botón para añadir estudiante -->
                         <form action="form.jsp" method="GET">
                             <button class="btn btn-primary btn-lg btn-block">Añadir</button>
                             <input type="hidden" name="action" value="insert">
+                            <input type="hidden" name="source" value="Main.jsp"> <!-- Parámetro source -->
                         </form>
                         <% }%>
                     </div>

@@ -11,15 +11,22 @@ import java.sql.SQLException;
 public class MyConnection {
     private static final String URL = "jdbc:mysql://localhost/aed";
     private static final String URLP = "jdbc:postgresql://localhost:5432/aed?characterEncoding=UTF-8";
-    private static final String USERP = "postgres";
+    private static final String URLMB = "jdbc:mariadb://localhost:3306/aed";
+
     private static final String USER = "root";
     private static final String PASSWORD = "root1234";
+
+    private static final String USERP = "postgres";
+    private static final String PASSWORDP = "your_postgres_password"; // Cambiar por tu contraseña de PostgreSQL
+
     private Connection con;
 
     public MyConnection() {
         try {
             System.out.println("Intentando cargar el driver MySQL...");
             Class.forName("com.mysql.cj.jdbc.Driver");
+            //Class.forName("org.postgresql.Driver");
+            // Class.forName("org.mariadb.jdbc.Driver");
             System.out.println("Driver MySQL cargado exitosamente.");
             
             System.out.println("Intentando conectar a la base de datos MySQL...");
